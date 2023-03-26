@@ -1,14 +1,21 @@
 package org.stella;
 
-import java.io.*;
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.atn.*;
-import org.antlr.v4.runtime.dfa.*;
-import java.util.*;
+import org.antlr.v4.runtime.atn.ATNConfigSet;
+import org.antlr.v4.runtime.dfa.DFA;
+import org.stella.eval.Eval;
+import org.stella.eval.TypeCheck;
+import org.syntax.stella.Absyn.Expr;
+import org.syntax.stella.Absyn.Program;
+import org.syntax.stella.PrettyPrinter;
+import org.syntax.stella.stellaLexer;
+import org.syntax.stella.stellaParser;
 
-import org.syntax.stella.*;
-import org.syntax.stella.Absyn.*;
-import org.stella.eval.*;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.BitSet;
 
 public class Main
 {
