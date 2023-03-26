@@ -2,7 +2,7 @@ language core;
 
 // addition of natural numbers
 fn Nat::add(n : Nat) -> Nat {
-  return fn(m : Nat) {
+  return fn(m : Nat) { // returns function instead of nat
     return Nat::rec(n, m, fn(i : Nat) {
       return fn(r : Nat) {
         return succ( r ); // r := r + 1

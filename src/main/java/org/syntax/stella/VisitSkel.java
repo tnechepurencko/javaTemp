@@ -2,6 +2,8 @@
 
 package org.syntax.stella;
 
+import org.syntax.stella.Absyn.*;
+
 /*** Visitor Design Pattern Skeleton. ***/
 
 /* This implements the common visitor design pattern.
@@ -10,10 +12,23 @@ package org.syntax.stella;
    Replace the R and A parameters with the desired return
    and context types.*/
 
-public class VisitSkel
+public class VisitSkel//<R, A>
 {
+  public String checkProgram(AProgram aProgram) {
+    ProgramVisitor<String, String> programVisitor = new ProgramVisitor<>();
+    return programVisitor.visit(aProgram, "someArgs");
+  }
+
   public class ProgramVisitor<R,A> implements org.syntax.stella.Absyn.Program.Visitor<R,A>
   {
+    private R trueReturn;
+    private R falseReturn;
+
+    public void setReturn(R trueReturn, R falseReturn) {
+      this.trueReturn = trueReturn;
+      this.falseReturn = falseReturn;
+    }
+
     public R visit(org.syntax.stella.Absyn.AProgram p, A arg)
     { /* Code for AProgram goes here */
       p.languagedecl_.accept(new LanguageDeclVisitor<R,A>(), arg);
@@ -43,10 +58,25 @@ public class VisitSkel
       return null;
     }
   }
-  public class DeclVisitor<R,A> implements org.syntax.stella.Absyn.Decl.Visitor<R,A>
+  public class DeclVisitor<R,A> implements org.syntax.stella.Absyn.Decl.Visitor<R,A> // DeclVisitor<R,A> initially
   {
     public R visit(org.syntax.stella.Absyn.DeclFun p, A arg)
     { /* Code for DeclFun goes here */
+      if (p.returntype_.getClass().equals(SomeReturnType.class)) {
+        SomeReturnType someReturnType = (SomeReturnType) p.returntype_;
+        if (someReturnType.type_.getClass().equals(TypeFun.class) && !p.expr_.getClass().equals(Abstraction.class)) {
+          return (R) ("TypeError in DeclVisitor.visit(): expected Abstraction, got " + p.expr_.getClass());
+//          System.out.println("TypeError in DeclVisitor.visit(): expected Abstraction, got " + p.expr_.getClass());
+//          System.exit(1);
+        } else if (someReturnType.type_.getClass().equals(TypeNat.class)) {
+          if (!p.expr_.getClass().equals(NatRec.class) && !p.expr_.getClass().equals(Succ.class)) {
+            return (R) ("TypeError in DeclVisitor.visit(): expected NatRec, got " + p.expr_.getClass());
+//            System.out.println("TypeError in DeclVisitor.visit(): expected NatRec, got " + p.expr_.getClass());
+//            System.exit(1);
+          }
+        }
+      }
+
       for (org.syntax.stella.Absyn.Annotation x: p.listannotation_) {
         x.accept(new AnnotationVisitor<R,A>(), arg);
       }
@@ -86,7 +116,7 @@ public class VisitSkel
   }
   public class ParamDeclVisitor<R,A> implements org.syntax.stella.Absyn.ParamDecl.Visitor<R,A>
   {
-    public R visit(org.syntax.stella.Absyn.AParamDecl p, A arg)
+    public R visit(org.syntax.stella.Absyn.AParamDecl p, A arg) // here
     { /* Code for AParamDecl goes here */
       //p.stellaident_;
       p.type_.accept(new TypeVisitor<R,A>(), arg);
@@ -522,7 +552,7 @@ public class VisitSkel
     { /* Code for TypeBool goes here */
       return null;
     }
-    public R visit(org.syntax.stella.Absyn.TypeNat p, A arg)
+    public R visit(org.syntax.stella.Absyn.TypeNat p, A arg) // here
     { /* Code for TypeNat goes here */
       return null;
     }
